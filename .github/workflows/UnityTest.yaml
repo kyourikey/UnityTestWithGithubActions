@@ -1,0 +1,49 @@
+name: UnityTest
+
+on:
+  push:
+    branches:
+      - main
+
+env:
+  UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+  PROJECT_ROOT: .
+
+jobs:
+  testAllModes:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        unityVersion: 
+          - 2018.4.19f1
+        testMode:
+          - playmode
+          - editmode
+
+    container: docker://gableroux/unity3d:${{ matrix.unityVersion }}
+
+    name: Test in ${{ matrix.testMode }} on version ${{ matrix.unityVersion }}
+
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          lfs: true
+
+      - uses: actions/cache@v1.1.0
+        with:
+          path: ${{ env.PROJECT_ROOT }}/Library
+          key: Library-${{ env.PROJECT_ROOT }}
+
+      - uses: webbertakken/unity-test-runner@v1.4
+        id: tests
+        with:
+          projectPath: ${{ env.PROJECT_ROOT }}
+          unityVersion: ${{ matrix.unityVersion }}
+          testMode: ${{ matrix.testMode }}
+          artifactsPath: ${{ matrix.testMode }}-artifacts
+
+      - uses: actions/upload-artifact@v2
+        with:
+          name: Test results for ${{ matrix.testMode }}
+          path: ${{ steps.tests.outputs.artifactsPath }}
