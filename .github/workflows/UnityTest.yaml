@@ -7,7 +7,6 @@ on:
 
 env:
   UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
-  PROJECT_ROOT: .
 
 jobs:
   testAllModes:
@@ -29,9 +28,9 @@ jobs:
       - uses: actions/checkout@v1
         with:
           lfs: true
-      
+
       - run: mkdir -p path/to/artifact
-      - run: /opt/Unity/Editor/Unity -manualLicenseFile ${{ UNITY_LICENSE }} -batchmode -nographics -quit || exit 0
+      - run: /opt/Unity/Editor/Unity -manualLicenseFile ${{ env.UNITY_LICENSE }} -batchmode -nographics -quit || exit 0
       - run: /opt/Unity/Editor/Unity -batchmode -nographics -silent-crashes -logFile -projectPath . -runEditorTests -editorTestsResultFile path/to/artifact/results.xml || exit 0
       
       - uses: actions/upload-artifact@v2
