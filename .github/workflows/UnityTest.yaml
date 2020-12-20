@@ -35,7 +35,7 @@ jobs:
           path: ${{ env.PROJECT_ROOT }}/Library
           key: Library-${{ env.PROJECT_ROOT }}
 
-      - uses: webbertakken/unity-test-runner@v1.4
+      - uses: webbertakken/unity-test-runner@v1
         id: tests
         with:
           projectPath: ${{ env.PROJECT_ROOT }}
